@@ -15,7 +15,7 @@ func must(err error) {
 
 func help() {
 	// docker run <image> cmd args
-	fmt.Println("Usage: main run cmd [args]")
+	fmt.Println("Usage: container0 run cmd [args]")
 	os.Exit(0)
 }
 
