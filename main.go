@@ -33,6 +33,7 @@ func run() {
 			// PID namespace gives a process and its children their own view of a subset of the processes in the system.
 			// Think of it as a mapping table.
 			syscall.CLONE_NEWPID,
+		Unshareflags: syscall.CLONE_NEWNS, // to create a private mount namespace
 	}
 	must(syscall.Sethostname([]byte("docker-0")))
 
