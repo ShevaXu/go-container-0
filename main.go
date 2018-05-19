@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"syscall"
 )
 
 func must(err error) {
@@ -23,6 +24,11 @@ func run() {
 
 	cmd := exec.Command(os.Args[2], os.Args[3:]...)
 	cmd.Stdin, cmd.Stdout, cmd.Stderr = os.Stdin, os.Stdout, os.Stderr
+	cmd.SysProcAttr = &syscall.SysProcAttr{
+		// UTS namespace gives its processes their own view of the system’s hostname and domain name
+		Cloneflags: syscall.CLONE_NEWUTS,
+	}
+	must(syscall.Sethostname([]byte("docker-0")))
 
 	must(cmd.Run())
 }
