@@ -19,8 +19,26 @@ func help() {
 	os.Exit(0)
 }
 
+/* showNs shows the namespaces
+ *
+$ ls -ls /proc/self/ns
+0 lrwxrwxrwx 1 root root 0 May 20 06:04 ipc -> ipc:[4026531839]
+0 lrwxrwxrwx 1 root root 0 May 20 06:04 mnt -> mnt:[4026532845]
+0 lrwxrwxrwx 1 root root 0 May 20 06:04 net -> net:[4026531968]
+0 lrwxrwxrwx 1 root root 0 May 20 06:04 pid -> pid:[4026532844]
+0 lrwxrwxrwx 1 root root 0 May 20 06:04 user -> user:[4026531837]
+0 lrwxrwxrwx 1 root root 0 May 20 06:04 uts -> uts:[4026532843]
+*/
+func showNs() {
+	fmt.Println("Current namespace ===")
+	cmd := exec.Command("ls", "-l", "/proc/self/ns")
+	cmd.Stdout = os.Stdout
+	must(cmd.Run())
+}
+
 func run() {
-	fmt.Printf("Running %v as parent PID %d\n\n", os.Args[2:], os.Getpid())
+	fmt.Printf("\nRunning %v as parent PID %d\n\n", os.Args[2:], os.Getpid())
+	showNs()
 
 	cmd := exec.Command("/proc/self/exe", append([]string{"child"}, os.Args[2:]...)...)
 
@@ -40,7 +58,8 @@ func run() {
 }
 
 func child() {
-	fmt.Printf("Running %v as child PID %d\n\n", os.Args[2:], os.Getpid())
+	fmt.Printf("\nRunning %v as child PID %d\n\n", os.Args[2:], os.Getpid())
+	showNs()
 
 	cmd := exec.Command(os.Args[2], os.Args[3:]...)
 	cmd.Stdin, cmd.Stdout, cmd.Stderr = os.Stdin, os.Stdout, os.Stderr
