@@ -35,7 +35,6 @@ func run() {
 			syscall.CLONE_NEWPID,
 		Unshareflags: syscall.CLONE_NEWNS, // to create a private mount namespace
 	}
-	must(syscall.Sethostname([]byte("docker-0")))
 
 	must(cmd.Run())
 }
@@ -45,6 +44,8 @@ func child() {
 
 	cmd := exec.Command(os.Args[2], os.Args[3:]...)
 	cmd.Stdin, cmd.Stdout, cmd.Stderr = os.Stdin, os.Stdout, os.Stderr
+
+	must(syscall.Sethostname([]byte("docker-0")))
 
 	// change the root filesystem
 	// (NOTE that /home/rootfs must be a valid dir, e.g., downloaded from
